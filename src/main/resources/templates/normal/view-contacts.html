@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{/normal/nav::dash(~{::section})}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${title}">Enhanced Contact Table</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .card-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .search-bar {
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+
+<section>
+<div class="container mt-5 mb-5">
+  <div class="card shadow-sm">
+  
+
+  
+    
+    <div class="card-header bg-white py-3">
+      <div class="card-header-flex">
+        <h2 class="mb-0">Contacts 👥</h2>
+        <div class="d-flex align-items-center gap-2">
+          <input type="text" class="form-control search-bar" placeholder="Search contacts...">
+          <a th:href="@{/user/add-contact}"
+             class="btn btn-success d-flex align-items-center gap-1 text-decoration-none">
+            <i class="bi bi-plus-circle-fill"></i> Add New
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle text-center">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="e , loop:${contact.content}">
+              <td th:text="${loop.index + 1 + (currentPage * 5)}">1</td>
+              
+              <!-- ✅ Profile Image + Name -->
+               <td>
+				  <div class="d-flex align-items-center" style="gap: 10px; min-width: 200px;">
+				    
+				    <img th:if="${e.image != null}" 
+				         th:src="@{/img/{image}(image=${e.image})}" 
+				         alt="Profile" 
+				         style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #6c757d; object-fit: cover;" />
+				         
+				    <img th:unless="${e.image != null}" 
+				         th:src="@{/img/default.png}" 
+				         alt="Default Profile" 
+				         style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #6c757d; object-fit: cover;" />
+				    
+				    <a th:href="@{/user/contact/{cid}(cid=${e.Cid})}">
+				    	 <span th:text="${e.firstName}" style="white-space: nowrap;"></span>
+				    </a>
+				  </div>
+				</td>
+              
+              <td th:text="${e.email}">example@mail.com</td>
+              <td th:text="${e.phone}">1234567890</td>
+              <td>
+			  <!-- Update Button -->
+				  <a th:href="@{'/user/update-contact/' + ${e.Cid}}" class="btn btn-sm btn-outline-warning" title="Update">
+				    <i class="bi bi-pencil-square"></i>
+				  </a>
+				  <!-- Delete Button Form -->
+				  <a th:href="@{'/user/delete/' + ${e.Cid}}" class="btn btn-sm btn-outline-danger" title="Delete">
+    				<i class="bi bi-trash3-fill"></i>
+				  </a>
+				</td>
+             </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card-footer bg-white d-flex justify-content-end">
+      <nav aria-label="Page navigation">
+        <ul class="pagination mb-0">
+          <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+            <a class="page-link" th:href="@{/user/view-contacts/{p}(p=${currentPage-1})}">Previous</a>
+          </li>  
+          <li class="page-item" th:each="i : ${#numbers.sequence(0 , totalPage-1)}"
+              th:classappend="${i == currentPage} ? 'active'">
+            <a class="page-link" th:href="@{/user/view-contacts/{p}(p=${i})}" th:text="${i+1}">1</a>
+          </li>
+          <li class="page-item" th:classappend="${currentPage == totalPage-1} ? 'disabled'">
+            <a class="page-link" th:href="@{/user/view-contacts/{p}(p=${currentPage+1})}">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
